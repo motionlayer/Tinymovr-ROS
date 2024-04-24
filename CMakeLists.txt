@@ -130,14 +130,24 @@ include_directories(
 set(TINYMOVR_SOURCES
   src/tinymovr/can.cpp
   src/tinymovr/comms.cpp
+  src/tinymovr/commutation_sensor.cpp
   src/tinymovr/controller.cpp
   src/tinymovr/current.cpp
-  src/tinymovr/encoder.cpp
+  src/tinymovr/external_spi.cpp
+  src/tinymovr/hall.cpp
+  src/tinymovr/homing.cpp
   src/tinymovr/motor.cpp
+  src/tinymovr/onboard.cpp
+  src/tinymovr/position_sensor.cpp
   src/tinymovr/position.cpp
   src/tinymovr/scheduler.cpp
+  src/tinymovr/select.cpp
+  src/tinymovr/sensors.cpp
+  src/tinymovr/setup.cpp
+  src/tinymovr/stall_detect.cpp
   src/tinymovr/tinymovr.cpp
   src/tinymovr/traj_planner.cpp
+  src/tinymovr/user_frame.cpp
   src/tinymovr/velocity.cpp
   src/tinymovr/voltage.cpp
   src/tinymovr/watchdog.cpp

@@ -239,7 +239,7 @@ bool TinymovrJoint::init(ros::NodeHandle& root_nh, ros::NodeHandle& robot_hw_nh)
     ROS_DEBUG("Asserting calibrated");
     for (int i=0; i<num_joints; i++)
     {
-        ROS_ASSERT((servos[i].encoder.get_calibrated() == true) && (servos[i].motor.get_calibrated() == true));
+        ROS_ASSERT(servos[i].get_calibrated() == true);
         ROS_DEBUG("%s ok", joint_name[i].c_str());
     }
 
@@ -327,8 +327,8 @@ void TinymovrJoint::read(const ros::Time& time, const ros::Duration& period)
         for (int i=0; i<servos.size(); i++)
         {
             const double ticks_to_rads = 1.0/rads_to_ticks[i];
-            joint_position_state[i] = servos[i].encoder.get_position_estimate() * ticks_to_rads;
-            joint_velocity_state[i] = servos[i].encoder.get_velocity_estimate() * ticks_to_rads;
+            joint_position_state[i] = servos[i].sensors.user_frame.get_position_estimate() * ticks_to_rads;
+            joint_velocity_state[i] = servos[i].sensors.user_frame.get_velocity_estimate() * ticks_to_rads;
             joint_effort_state[i] = servos[i].controller.current.get_Iq_estimate();
         }
     }

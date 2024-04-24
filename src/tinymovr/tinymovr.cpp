@@ -105,24 +105,44 @@ uint8_t Tinymovr::get_errors(void)
     }
     return value;
 }
-
-void Tinymovr::save_config()
+uint8_t Tinymovr::get_warnings(void)
 {
+    uint8_t value = 0;
     this->send(10, this->_data, 0, true);
+    if (this->recv(10, this->_data, &(this->_dlc), this->delay_us_value)) 
+    {
+        read_le(&value, this->_data);
+    }
+    return value;
 }
 
-void Tinymovr::erase_config()
+void Tinymovr::save_config()
 {
     this->send(11, this->_data, 0, true);
 }
 
-void Tinymovr::reset()
+void Tinymovr::erase_config()
 {
     this->send(12, this->_data, 0, true);
 }
 
-void Tinymovr::enter_dfu()
+void Tinymovr::reset()
 {
     this->send(13, this->_data, 0, true);
+}
+
+void Tinymovr::enter_dfu()
+{
+    this->send(14, this->_data, 0, true);
+}
+uint32_t Tinymovr::get_config_size(void)
+{
+    uint32_t value = 0;
+    this->send(15, this->_data, 0, true);
+    if (this->recv(15, this->_data, &(this->_dlc), this->delay_us_value)) 
+    {
+        read_le(&value, this->_data);
+    }
+    return value;
 }
 
