@@ -1,13 +1,15 @@
 __Tinymovr ROS 2 Hardware Interface__
 
-![ROS2](https://img.shields.io/badge/ROS2-Jazzy-blue)
+![ROS2](https://img.shields.io/badge/ROS2-Humble%20|%20Jazzy-blue)
 ![ROS1](https://img.shields.io/badge/ROS1-Noetic-inactive)
 [![CI](https://github.com/tinymovr/Tinymovr-ROS/actions/workflows/industrial_ci.yaml/badge.svg)](https://github.com/tinymovr/Tinymovr-ROS/actions)
 
 > [!IMPORTANT]
-> **This branch (`main`) is for ROS 2 Jazzy** on Ubuntu 24.04
+> **This branch (`main`) is for ROS 2** (Humble on Ubuntu 22.04 or Jazzy on Ubuntu 24.04)
 >
 > **For ROS 1 Noetic**, see the [`ros1-noetic`](https://github.com/tinymovr/Tinymovr-ROS/tree/ros1-noetic) branch (legacy support)
+>
+> _Note: CI currently tests with ROS 2 Humble due to GitHub Actions runner availability_
 
 ---
 
@@ -23,12 +25,20 @@ A ROS 2 package that provides hardware interfacing for the [Tinymovr](https://ti
 
 ## Prerequisites
 
-- **ROS 2 Jazzy** (LTS) on Ubuntu 24.04
+- **ROS 2 Humble** (Ubuntu 22.04) or **ROS 2 Jazzy** (Ubuntu 24.04)
 - **SocketCAN** tools and utilities installed
 - **Tinymovr** devices with firmware 1.6.x or 2.x
 - Devices properly set up and calibrated
 
 ### Required ROS 2 Packages
+
+**For ROS 2 Humble (Ubuntu 22.04):**
+```bash
+sudo apt install ros-humble-ros2-control ros-humble-ros2-controllers \
+  ros-humble-xacro ros-humble-robot-state-publisher
+```
+
+**For ROS 2 Jazzy (Ubuntu 24.04):**
 ```bash
 sudo apt install ros-jazzy-ros2-control ros-jazzy-ros2-controllers \
   ros-jazzy-xacro ros-jazzy-robot-state-publisher
