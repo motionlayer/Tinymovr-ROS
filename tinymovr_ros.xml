@@ -1,0 +1,10 @@
+<library path="tinymovr_ros_joint_iface">
+  <class name="tinymovr_ros/TinymovrSystem"
+         type="tinymovr_ros::TinymovrSystem"
+         base_class_type="hardware_interface::SystemInterface">
+    <description>
+      Tinymovr hardware interface for ROS 2 Control.
+      Provides position, velocity, and effort control for Tinymovr motor controllers via SocketCAN.
+    </description>
+  </class>
+</library>
