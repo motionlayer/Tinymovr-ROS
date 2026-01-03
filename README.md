@@ -1,5 +1,16 @@
 __Tinymovr ROS 2 Hardware Interface__
 
+![ROS2](https://img.shields.io/badge/ROS2-Jazzy-blue)
+![ROS1](https://img.shields.io/badge/ROS1-Noetic-inactive)
+[![CI](https://github.com/tinymovr/Tinymovr-ROS/actions/workflows/industrial_ci.yaml/badge.svg)](https://github.com/tinymovr/Tinymovr-ROS/actions)
+
+> [!IMPORTANT]
+> **This branch (`main`) is for ROS 2 Jazzy** on Ubuntu 24.04
+>
+> **For ROS 1 Noetic**, see the [`ros1-noetic`](https://github.com/tinymovr/Tinymovr-ROS/tree/ros1-noetic) branch (legacy support)
+
+---
+
 A ROS 2 package that provides hardware interfacing for the [Tinymovr](https://tinymovr.com) motor controller. This interface allows for seamless integration of Tinymovr devices with ROS 2-based robotic systems using the ros2_control framework.
 
 ## Features
