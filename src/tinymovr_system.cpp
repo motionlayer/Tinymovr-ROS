@@ -265,7 +265,9 @@ CallbackReturn TinymovrSystem::on_activate(const rclcpp_lifecycle::State & /*pre
                    info_.joints[i].name.c_str(), current_state, current_mode);
       return CallbackReturn::ERROR;
     }
-    RCLCPP_DEBUG(rclcpp::get_logger("TinymovrSystem"), "State and mode OK for %s", info_.joints[i].name.c_str());
+    RCLCPP_DEBUG(
+      rclcpp::get_logger("TinymovrSystem"),
+      "State and mode OK for %s", info_.joints[i].name.c_str());
   }
 
   RCLCPP_INFO(rclcpp::get_logger("TinymovrSystem"), "Hardware interface activated successfully");
@@ -371,15 +373,19 @@ hardware_interface::return_type TinymovrSystem::read(
     for (size_t i = 0; i < servos_.size(); ++i)
     {
       const double ticks_to_rads = 1.0 / rads_to_ticks_[i];
-      hw_states_positions_[i] = servos_[i].sensors.user_frame.get_position_estimate() * ticks_to_rads;
-      hw_states_velocities_[i] = servos_[i].sensors.user_frame.get_velocity_estimate() * ticks_to_rads;
+      hw_states_positions_[i] =
+        servos_[i].sensors.user_frame.get_position_estimate() * ticks_to_rads;
+      hw_states_velocities_[i] =
+        servos_[i].sensors.user_frame.get_velocity_estimate() * ticks_to_rads;
       hw_states_efforts_[i] = servos_[i].controller.current.get_Iq_estimate();
     }
     return hardware_interface::return_type::OK;
   }
   catch(const std::exception& e)
   {
-    RCLCPP_ERROR(rclcpp::get_logger("TinymovrSystem"), "Error reading from Tinymovr CAN: %s", e.what());
+    RCLCPP_ERROR(
+      rclcpp::get_logger("TinymovrSystem"),
+      "Error reading from Tinymovr CAN: %s", e.what());
     return hardware_interface::return_type::ERROR;
   }
 }
@@ -398,22 +404,26 @@ hardware_interface::return_type TinymovrSystem::write(
   }
   catch(const std::exception& e)
   {
-    RCLCPP_ERROR(rclcpp::get_logger("TinymovrSystem"), "Error writing to Tinymovr CAN: %s", e.what());
+    RCLCPP_ERROR(
+      rclcpp::get_logger("TinymovrSystem"),
+      "Error writing to Tinymovr CAN: %s", e.what());
     return hardware_interface::return_type::ERROR;
   }
 }
 
 uint8_t TinymovrSystem::str2mode(const std::string & mode_string)
 {
-  if (mode_string == "current" || mode_string == "effort")
+  if (mode_string == "current" || mode_string == "effort") {
     return 0;
-  else if (mode_string == "velocity")
+  } else if (mode_string == "velocity") {
     return 1;
-  else if (mode_string == "position")
+  } else if (mode_string == "position") {
     return 2;
-  else {
-    RCLCPP_WARN(rclcpp::get_logger("TinymovrSystem"),
-                "Unknown command mode '%s', defaulting to current/effort", mode_string.c_str());
+  } else {
+    RCLCPP_WARN(
+      rclcpp::get_logger("TinymovrSystem"),
+      "Unknown command mode '%s', defaulting to current/effort",
+      mode_string.c_str());
     return 0;
   }
 }
