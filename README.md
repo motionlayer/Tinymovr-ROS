@@ -1,87 +1,144 @@
-__Tinymovr ROS Hardware Interface__
+__Tinymovr ROS 2 Hardware Interface__
 
-A ROS package that provides hardware interfacing for the [Tinymovr](https://tinymovr.com) motor controller. This interface allows for seamless integration of Tinymovr devices with ROS-based robotic systems, offering joint state and control through ROS topics and services.
+A ROS 2 package that provides hardware interfacing for the [Tinymovr](https://tinymovr.com) motor controller. This interface allows for seamless integration of Tinymovr devices with ROS 2-based robotic systems using the ros2_control framework.
 
 ## Features
-- Real-time reading of joint positions, velocities, and efforts.
-- Ability to send joint command setpoints.
-- Error handling and robust exception management.
-- Compatible with standard ROS controllers, enabling a plug-and-play experience.
+- Real-time reading of joint positions, velocities, and efforts
+- Ability to send joint command setpoints for position, velocity, and effort control
+- Full lifecycle management with ros2_control SystemInterface
+- Error handling and robust exception management
+- Compatible with standard ROS 2 controllers, enabling a plug-and-play experience
+- Integration with diff_drive_controller for differential drive robots
 
 ## Prerequisites
 
-- ROS (Robot Operating System) - Tested with ROS Noetic, but should be compatible with other versions.
-- SocketCAN tools and utilities installed.
-- Tinymovr devices with firmware 1.6.x
-- Devices properly set up and calibrated.
+- **ROS 2 Jazzy** (LTS) on Ubuntu 24.04
+- **SocketCAN** tools and utilities installed
+- **Tinymovr** devices with firmware 1.6.x or 2.x
+- Devices properly set up and calibrated
+
+### Required ROS 2 Packages
+```bash
+sudo apt install ros-jazzy-ros2-control ros-jazzy-ros2-controllers \
+  ros-jazzy-xacro ros-jazzy-robot-state-publisher
+```
 
 > [!NOTE]
-> If you plan to use the CANine adapter, you need to flash it with the Candlelight firmware, which is compatible with socketcan. Use [this web-based flasher](https://canable.io/updater/canable1.html) for easy upgrade. Use Chrome and choose the Candlelight firmware from the drop-down list.
+> If you plan to use the CANine adapter, you need to flash it with the Candlelight firmware, which is compatible with SocketCAN. Use [this web-based flasher](https://canable.io/updater/canable1.html) for easy upgrade. Use Chrome and choose the Candlelight firmware from the drop-down list.
 
 ## Installation
 
-1. Navigate to your catkin workspace's source folder:
+1. Create a ROS 2 workspace (if you don't have one):
 
 ```bash
-cd ~/catkin_ws/src/
+mkdir -p ~/ros2_ws/src
+cd ~/ros2_ws/src
 ```
 
 2. Clone the repository:
 
 ```bash
-git clone git@github.com:tinymovr/Tinymovr-ROS.git
+git clone git@github.com:tinymovr/Tinymovr-ROS.git tinymovr_ros
 ```
 
-3. Build your catkin workspace:
+3. Build your workspace:
 
 ```bash
-cd ~/catkin_ws/
-catkin_make
+cd ~/ros2_ws
+colcon build --packages-select tinymovr_ros
 ```
 
 4. Source the workspace:
 
 ```bash
-source devel/setup.bash
+source install/setup.bash
 ```
 
-## Bring up Socketcan
+## Bring up SocketCAN
 
 Depending on your device you may need to add the correct module to the kernel. Following that, bring up the interface as follows:
 
 ```bash
 sudo ip link set can0 type can bitrate 1000000
+sudo ip link set up can0
 ```
 
-## Run the Diffbot demo!
+## Run the Diffbot Demo!
 
-1. Ensure your Tinymovr instances are calibrated and well tuned, test functioning using Tinymovr Studio or CLI.
+1. Ensure your Tinymovr instances are calibrated and well tuned. Test functioning using Tinymovr Studio or CLI.
 
-2. Configure your hardware in `config/hardware.yaml` and diff drive config in `config/diff_drive_config.yaml`
+2. Configure your hardware in `urdf/tinymovr_diffbot.urdf.xacro` and diff drive config in `config/diff_drive_config.yaml`
 
-3. Start the `tinymovr_diffbot_demo_node` node:
+3. Start the hardware interface and controllers:
 
 ```bash
-roslaunch tinymovr_ros tinymovr_diffbot_demo_node.launch
+ros2 launch tinymovr_ros tinymovr_diffbot_demo.launch.py
 ```
 
 4. Spin up a keyboard teleop and drive your robot:
 
 ```bash
-rosrun teleop_twist_keyboard teleop_twist_keyboard.py cmd_vel:=/diff_drive_controller/cmd_vel
+ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=/diff_drive_controller/cmd_vel_unstamped
 ```
 
 ## Configuration
 
-To customize the behavior of the Tinymovr ROS, adjust the parameters in the `config` directory. Here, you can set specifics about each joint, including joint names, IDs, and other parameters relevant to your hardware setup.
+The Tinymovr ROS 2 interface uses the ros2_control framework:
+
+### Hardware Configuration
+Hardware parameters are defined in `urdf/tinymovr_diffbot.urdf.xacro` using ros2_control tags. Each joint specifies:
+- `id`: CAN bus ID of the Tinymovr controller
+- `delay_us`: Communication delay in microseconds
+- `rads_to_ticks`: Conversion factor from radians to encoder ticks
+- `command_interface`: Control mode (position, velocity, or effort)
+- `offset`: Position offset in radians
+
+### Controller Configuration
+Controller parameters are defined in `config/diff_drive_config.yaml`:
+- Wheel separation and radius
+- Odometry parameters
+- Control loop update rate
+- Covariance matrices
+
+## Architecture
+
+This package implements a ros2_control `SystemInterface` that:
+- Manages lifecycle states (configure, activate, deactivate, cleanup, shutdown)
+- Exports position, velocity, and effort state interfaces
+- Exports position, velocity, and effort command interfaces
+- Communicates with Tinymovr controllers via SocketCAN
+- Integrates with standard ROS 2 controllers (diff_drive_controller, joint_state_broadcaster, etc.)
+
+## Monitoring and Control
+
+Check controller status:
+```bash
+ros2 control list_controllers
+ros2 control list_hardware_interfaces
+```
+
+View joint states:
+```bash
+ros2 topic echo /joint_states
+```
+
+View odometry:
+```bash
+ros2 topic echo /diff_drive_controller/odom
+```
+
+Send velocity commands directly:
+```bash
+ros2 topic pub /diff_drive_controller/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 0.1}, angular: {z: 0.0}}"
+```
 
 ## API Documentation
 
-Further details about the API and individual functions can be found in the generated Doxygen documentation. Please refer to the documentation for advanced use cases.
+Further details about the API and individual functions can be found in the code documentation. Please refer to the header files for advanced use cases.
 
 ## Contributing
 
-Contributions to improve and expand the functionality of Tinymovr ROS are welcome! Please open an issue or submit a pull request on the GitHub repository.
+Contributions to improve and expand the functionality of Tinymovr ROS 2 are welcome! Please open an issue or submit a pull request on the GitHub repository.
 
 ## External Links
 
