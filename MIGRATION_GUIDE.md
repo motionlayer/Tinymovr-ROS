@@ -185,17 +185,36 @@ radius = 7.54 / (10 * 2 * 3.14159) = 0.12 meters
 
 ### 3. Motor Position Offset
 
-Each motor may have a different zero position. The offset compensates for this.
+**Why needed even in velocity control?**
+Even though you send velocity commands, the system still reads encoder positions for:
+- Joint state publishing (`/joint_states` includes position)
+- Odometry calculation (integrates position changes over time)
+- State estimation and monitoring
+
+Each motor's encoder may have a different "zero" position when powered on. The offset ensures all encoders report consistent positions.
 
 **How to find offset:**
-1. Home your robot to a known position (e.g., wheels aligned)
-2. Read encoder positions via Tinymovr Studio
-3. Calculate offset to make positions match expected values
+
+**Option A: Set to zero and check (recommended for velocity control)**
+1. Set `offset` to `0.0` for all joints
+2. Launch the driver: `ros2 launch tinymovr_ros tinymovr_diffbot_demo.launch.py`
+3. Check joint positions: `ros2 topic echo /joint_states`
+4. If positions are reasonable (near zero or consistent), you're done!
+5. If one wheel shows very different position from the other, calculate offset
+
+**Option B: Manual calibration**
+1. Physically align your robot to a known position (e.g., wheels straight)
+2. Read encoder positions via Tinymovr Studio or from `/joint_states`
+3. Set offset = current_position to "zero" the encoders at this alignment
+4. Relaunch and verify positions are near zero
 
 **Common values:**
-- `0.0` - No offset needed
-- `3.14159265359` (π) - 180° offset
+- `0.0` - No offset needed (most common for velocity control)
+- `3.14159265359` (π) - 180° offset (wheel mounted backwards)
 - `-1.5708` (-π/2) - 90° counter-clockwise offset
+- Any value - Whatever makes your encoders read consistently
+
+**Important:** For differential drive velocity control, what matters most is that **both wheels use the same reference frame**. If odometry looks good, your offsets are fine!
 
 ---
 
