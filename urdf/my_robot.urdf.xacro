@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="my_robot">
+
+  <ros2_control name="tinymovr_system" type="system">
+    <hardware>
+      <plugin>tinymovr_ros/TinymovrSystem</plugin>
+      <param name="can_interface">can0</param>
+    </hardware>
+
+    <!-- WHEEL 1 (LEFT) -->
+    <joint name="wheel_1">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+      <param name="id">1</param>
+      <param name="delay_us">200</param>
+      <param name="rads_to_ticks">14.323944878</param>
+      <param name="command_interface">velocity</param>
+      <param name="offset">0.0</param>  <!-- Set to 0.0 for teleop (was 3.14159265359) -->
+    </joint>
+
+    <!-- WHEEL 2 (RIGHT) -->
+    <joint name="wheel_2">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+      <param name="id">2</param>
+      <param name="delay_us">200</param>
+      <param name="rads_to_ticks">14.323944878</param>
+      <param name="command_interface">velocity</param>
+      <param name="offset">0.0</param>  <!-- Set to 0.0 for teleop (was 3.14159265359) -->
+    </joint>
+  </ros2_control>
+
+</robot>
