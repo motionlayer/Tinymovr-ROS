@@ -1,4 +1,4 @@
-__Tinymovr ROS 2 Hardware Interface__
+# Tinymovr ROS 2 Hardware Interface
 
 ![ROS2](https://img.shields.io/badge/ROS2-Humble%20|%20Jazzy-blue)
 ![ROS1](https://img.shields.io/badge/ROS1-Noetic-inactive)
@@ -9,11 +9,21 @@ __Tinymovr ROS 2 Hardware Interface__
 >
 > **For ROS 1 Noetic**, see the [`ros1-noetic`](https://github.com/tinymovr/Tinymovr-ROS/tree/ros1-noetic) branch (legacy support)
 >
-> _Note: CI currently tests with ROS 2 Humble due to GitHub Actions runner availability_
+> **Migrating from ROS 1?** See [MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)
 
 ---
 
 A ROS 2 package that provides hardware interfacing for the [Tinymovr](https://tinymovr.com) motor controller. This interface allows for seamless integration of Tinymovr devices with ROS 2-based robotic systems using the ros2_control framework.
+
+## Table of Contents
+- [Features](#features)
+- [Installation](#installation)
+  - [Ubuntu 22.04/24.04](#ubuntu-22042404)
+  - [Raspberry Pi OS / Debian](#raspberry-pi-os--debian)
+- [Quick Start](#quick-start)
+- [Configuration](#configuration)
+- [Monitoring and Control](#monitoring-and-control)
+- [Documentation](#documentation)
 
 ## Features
 - Real-time reading of joint positions, velocities, and efforts
@@ -25,101 +35,278 @@ A ROS 2 package that provides hardware interfacing for the [Tinymovr](https://ti
 
 ## Prerequisites
 
-- **ROS 2 Humble** (Ubuntu 22.04) or **ROS 2 Jazzy** (Ubuntu 24.04)
-- **SocketCAN** tools and utilities installed
-- **Tinymovr** devices with firmware 1.6.x or 2.x
-- Devices properly set up and calibrated
-
-### Required ROS 2 Packages
-
-**For ROS 2 Humble (Ubuntu 22.04):**
-```bash
-sudo apt install ros-humble-ros2-control ros-humble-ros2-controllers \
-  ros-humble-xacro ros-humble-robot-state-publisher
-```
-
-**For ROS 2 Jazzy (Ubuntu 24.04):**
-```bash
-sudo apt install ros-jazzy-ros2-control ros-jazzy-ros2-controllers \
-  ros-jazzy-xacro ros-jazzy-robot-state-publisher
-```
+- **Tinymovr** devices with firmware 1.6.x or 2.x (properly calibrated)
+- **SocketCAN** tools and utilities
+- **ROS 2 Humble** (Ubuntu 22.04, Raspberry Pi/Debian) or **Jazzy** (Ubuntu 24.04)
 
 > [!NOTE]
-> If you plan to use the CANine adapter, you need to flash it with the Candlelight firmware, which is compatible with SocketCAN. Use [this web-based flasher](https://canable.io/updater/canable1.html) for easy upgrade. Use Chrome and choose the Candlelight firmware from the drop-down list.
+> If you plan to use the CANine adapter, flash it with Candlelight firmware for SocketCAN compatibility using [this web-based flasher](https://canable.io/updater/canable1.html) (use Chrome, choose Candlelight firmware).
+
+---
 
 ## Installation
 
-1. Create a ROS 2 workspace (if you don't have one):
+### Ubuntu 22.04/24.04
+
+#### 1. Install ROS 2 and Dependencies
+
+**For Humble (Ubuntu 22.04):**
+```bash
+sudo apt update
+sudo apt install -y \
+  ros-humble-ros-base \
+  ros-humble-ros2-control \
+  ros-humble-ros2-controllers \
+  ros-humble-xacro \
+  ros-humble-robot-state-publisher \
+  ros-humble-teleop-twist-keyboard
+```
+
+**For Jazzy (Ubuntu 24.04):**
+```bash
+sudo apt update
+sudo apt install -y \
+  ros-jazzy-ros-base \
+  ros-jazzy-ros2-control \
+  ros-jazzy-ros2-controllers \
+  ros-jazzy-xacro \
+  ros-jazzy-robot-state-publisher \
+  ros-jazzy-teleop-twist-keyboard
+```
+
+#### 2. Build Workspace
 
 ```bash
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
-```
-
-2. Clone the repository:
-
-```bash
-git clone git@github.com:tinymovr/Tinymovr-ROS.git tinymovr_ros
-```
-
-3. Build your workspace:
-
-```bash
+git clone https://github.com/tinymovr/Tinymovr-ROS.git tinymovr_ros
 cd ~/ros2_ws
 colcon build --packages-select tinymovr_ros
-```
-
-4. Source the workspace:
-
-```bash
 source install/setup.bash
 ```
 
-## Bring up SocketCAN
+---
 
-Depending on your device you may need to add the correct module to the kernel. Following that, bring up the interface as follows:
+### Raspberry Pi OS / Debian
+
+Debian Trixie (testing) and Raspberry Pi OS have newer system libraries that conflict with Ubuntu 22.04 ROS packages. The **official ROS 2 recommendation** is to use Docker ([source](https://docs.ros.org/en/foxy/How-To-Guides/Installing-on-Raspberry-Pi.html)).
+
+#### 1. Install Docker (one-time setup)
+
+```bash
+# Install Docker
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+
+# Add your user to docker group
+sudo usermod -aG docker $USER
+newgrp docker  # Or logout/login
+
+# Install docker-compose
+sudo apt install -y docker-compose
+```
+
+#### 2. Start ROS 2 Container
+
+```bash
+cd ~/Tinymovr-ROS  # Or wherever you cloned the repo
+./docker_run.sh
+```
+
+This starts a persistent container named `tinymovr_ros2` with Ubuntu + ROS 2 Humble.
+
+#### 3. Enter Container and Build
+
+```bash
+# Enter the container
+docker exec -it tinymovr_ros2 bash
+
+# Inside container: Install dependencies
+apt update && apt install -y \
+  ros-humble-ros2-control \
+  ros-humble-ros2-controllers \
+  ros-humble-xacro \
+  ros-humble-robot-state-publisher \
+  ros-humble-teleop-twist-keyboard
+
+# Build your robot package
+cd /workspace
+source /opt/ros/humble/setup.bash
+colcon build --packages-select tinymovr_ros
+source install/setup.bash
+```
+
+**Optional: Add shortcuts to your `~/.bashrc` on Raspberry Pi:**
+```bash
+alias ros2_shell='docker exec -it tinymovr_ros2 bash -c "cd /workspace && source /opt/ros/humble/setup.bash && source install/setup.bash && exec bash"'
+```
+
+Then just run `ros2_shell` to enter ROS 2 environment.
+
+**Docker Container Management:**
+```bash
+docker-compose stop      # Stop container
+docker-compose up -d     # Start container
+docker-compose restart   # Restart container
+docker logs tinymovr_ros2  # View logs
+```
+
+---
+
+## Quick Start
+
+### 1. Bring up SocketCAN
 
 ```bash
 sudo ip link set can0 type can bitrate 1000000
 sudo ip link set up can0
 ```
 
-## Run the Diffbot Demo!
+*If using Docker, run this inside the container.*
 
-1. Ensure your Tinymovr instances are calibrated and well tuned. Test functioning using Tinymovr Studio or CLI.
+### 2. Configure Your Robot
 
-2. Configure your hardware in `urdf/tinymovr_diffbot.urdf.xacro` and diff drive config in `config/diff_drive_config.yaml`
+This package includes two example configurations:
 
-3. Start the hardware interface and controllers:
+#### Demo Robot (`tinymovr_diffbot_demo.launch.py`)
+Generic 2-wheel differential drive configuration. Modify these files:
+- **Hardware**: `urdf/tinymovr_diffbot.urdf.xacro` - CAN IDs, encoder conversion, offsets
+- **Controller**: `config/diff_drive_config.yaml` - Wheel separation, radius, rates
 
+#### Your Custom Robot (`my_robot.launch.py`)
+A pre-configured example converted from ROS 1 hardware.yaml format:
+- **Hardware**: `urdf/my_robot.urdf.xacro` - CAN IDs 1&2, offset=0.0 for teleop
+- **Controller**: `config/my_robot_config.yaml` - 0.4m separation, 0.12m radius
+
+### 3. Launch Your Robot
+
+**Demo robot:**
 ```bash
 ros2 launch tinymovr_ros tinymovr_diffbot_demo.launch.py
 ```
 
-4. Spin up a keyboard teleop and drive your robot:
-
+**Your custom robot:**
 ```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=/diff_drive_controller/cmd_vel_unstamped
+ros2 launch tinymovr_ros my_robot.launch.py
 ```
+
+### 4. Drive with Keyboard
+
+In another terminal:
+```bash
+source ~/ros2_ws/install/setup.bash  # Or ros2_shell if using Docker
+ros2 run teleop_twist_keyboard teleop_twist_keyboard \
+  --ros-args --remap cmd_vel:=/cmd_vel
+```
+
+**Controls:**
+- `i` - Forward
+- `k` - Stop
+- `,` - Backward
+- `j` - Turn left
+- `l` - Turn right
+- `q`/`z` - Increase/decrease speeds
+
+---
 
 ## Configuration
 
 The Tinymovr ROS 2 interface uses the ros2_control framework:
 
-### Hardware Configuration
-Hardware parameters are defined in `urdf/tinymovr_diffbot.urdf.xacro` using ros2_control tags. Each joint specifies:
-- `id`: CAN bus ID of the Tinymovr controller
-- `delay_us`: Communication delay in microseconds
-- `rads_to_ticks`: Conversion factor from radians to encoder ticks
-- `command_interface`: Control mode (position, velocity, or effort)
-- `offset`: Position offset in radians
+### Hardware Configuration (URDF)
 
-### Controller Configuration
-Controller parameters are defined in `config/diff_drive_config.yaml`:
-- Wheel separation and radius
-- Odometry parameters
-- Control loop update rate
-- Covariance matrices
+Hardware parameters are defined in `urdf/*.urdf.xacro` using ros2_control tags. Each joint specifies:
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `id` | CAN bus ID of Tinymovr controller | `1` |
+| `delay_us` | Communication delay in microseconds | `200` |
+| `rads_to_ticks` | Encoder ticks per radian conversion | `14.323944878` |
+| `command_interface` | Control mode (velocity, position, or effort) | `velocity` |
+| `offset` | Position offset in radians | `0.0` or `3.14159265359` |
+
+**Example joint configuration:**
+```xml
+<joint name="wheel_1">
+  <command_interface name="velocity"/>
+  <state_interface name="position"/>
+  <state_interface name="velocity"/>
+  <state_interface name="effort"/>
+  <param name="id">1</param>
+  <param name="delay_us">200</param>
+  <param name="rads_to_ticks">14.323944878</param>
+  <param name="command_interface">velocity</param>
+  <param name="offset">0.0</param>
+</joint>
+```
+
+### Controller Configuration (YAML)
+
+Controller parameters are defined in `config/*.yaml`:
+
+```yaml
+diff_drive_controller:
+  ros__parameters:
+    left_wheel_names: ["wheel_1"]
+    right_wheel_names: ["wheel_2"]
+    wheel_separation: 0.4  # meters
+    wheel_radius: 0.12     # meters
+    publish_rate: 50.0     # Hz
+```
+
+### Adjustments
+
+**If robot moves wrong direction:**
+Edit URDF and add π to offset:
+```xml
+<param name="offset">3.14159265359</param>  <!-- 180° flip -->
+```
+
+**If robot turns too much/little:**
+Edit YAML config:
+```yaml
+wheel_separation: 0.4  # Increase to turn less, decrease to turn more
+```
+
+**If robot moves too fast/slow:**
+Edit YAML config:
+```yaml
+wheel_radius: 0.12  # Increase for faster, decrease for slower
+```
+
+---
+
+## Monitoring and Control
+
+**Check controller status:**
+```bash
+ros2 control list_controllers
+ros2 control list_hardware_interfaces
+```
+
+**View joint states:**
+```bash
+ros2 topic echo /joint_states
+```
+
+**View odometry:**
+```bash
+ros2 topic echo /diff_drive_controller/odom
+```
+
+**Send velocity commands:**
+```bash
+# Move forward slowly
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.1}}"
+
+# Rotate in place
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{angular: {z: 0.5}}"
+
+# Stop
+ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{}"
+```
+
+---
 
 ## Architecture
 
@@ -130,40 +317,48 @@ This package implements a ros2_control `SystemInterface` that:
 - Communicates with Tinymovr controllers via SocketCAN
 - Integrates with standard ROS 2 controllers (diff_drive_controller, joint_state_broadcaster, etc.)
 
-## Monitoring and Control
+**Key components:**
+- **Hardware Interface**: `tinymovr_system.cpp` - SystemInterface implementation
+- **Plugin Description**: `tinymovr_ros.xml` - Pluginlib registration
+- **Launch Files**: `launch/*.launch.py` - Python launch configurations
+- **URDF**: `urdf/*.urdf.xacro` - Hardware descriptions with ros2_control tags
 
-Check controller status:
-```bash
-ros2 control list_controllers
-ros2 control list_hardware_interfaces
-```
+---
 
-View joint states:
-```bash
-ros2 topic echo /joint_states
-```
+## Documentation
 
-View odometry:
-```bash
-ros2 topic echo /diff_drive_controller/odom
-```
+- **[MIGRATION_GUIDE.md](MIGRATION_GUIDE.md)** - Complete guide for migrating from ROS 1 to ROS 2
+  - Parameter mapping (hardware.yaml → URDF)
+  - Controller config updates
+  - Physical measurements and calibration
+  - Troubleshooting
 
-Send velocity commands directly:
-```bash
-ros2 topic pub /diff_drive_controller/cmd_vel_unstamped geometry_msgs/msg/Twist "{linear: {x: 0.1}, angular: {z: 0.0}}"
-```
+- **[FORMATTING.md](FORMATTING.md)** - Code style guide for contributors
+  - Formatting standards
+  - Linting setup
+  - Pre-commit hooks
 
-## API Documentation
+- **API Documentation** - See header files for detailed API reference
 
-Further details about the API and individual functions can be found in the code documentation. Please refer to the header files for advanced use cases.
+---
 
 ## Contributing
 
-Contributions to improve and expand the functionality of Tinymovr ROS 2 are welcome! Please open an issue or submit a pull request on the GitHub repository.
+Contributions are welcome! Please:
+1. Read [FORMATTING.md](FORMATTING.md) for code style
+2. Test changes with `colcon test`
+3. Run formatters: `./format_code.sh`
+4. Open an issue or submit a pull request
+
+---
 
 ## External Links
 
-[ROS Wiki Page](http://wiki.ros.org/Robots/tinymovr)
+- [ROS Wiki Page](http://wiki.ros.org/Robots/tinymovr)
+- [Tinymovr Documentation](https://tinymovr.com)
+- [ROS 2 Raspberry Pi Setup](https://docs.ros.org/en/foxy/How-To-Guides/Installing-on-Raspberry-Pi.html)
+
+---
 
 ## License
 
