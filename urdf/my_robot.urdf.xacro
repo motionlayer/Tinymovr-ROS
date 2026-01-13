@@ -1,6 +1,25 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="my_robot">
 
+  <!-- Minimal robot description for robot_state_publisher -->
+  <link name="base_link"/>
+
+  <link name="wheel_1_link"/>
+  <joint name="wheel_1" type="continuous">
+    <parent link="base_link"/>
+    <child link="wheel_1_link"/>
+    <origin xyz="0 0.2 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <link name="wheel_2_link"/>
+  <joint name="wheel_2" type="continuous">
+    <parent link="base_link"/>
+    <child link="wheel_2_link"/>
+    <origin xyz="0 -0.2 0" rpy="0 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
   <ros2_control name="tinymovr_system" type="system">
     <hardware>
       <plugin>tinymovr_ros/TinymovrSystem</plugin>
