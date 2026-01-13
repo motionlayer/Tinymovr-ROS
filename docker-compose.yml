@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   ros2:
-    image: osrf/ros:humble-ros-base
+    image: ros:humble-ros-base
     container_name: tinymovr_ros2
     privileged: true
     network_mode: host
