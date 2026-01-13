@@ -12,15 +12,20 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# Check if docker-compose is installed
-if ! command -v docker-compose &> /dev/null; then
-    echo "docker-compose is not installed. Install with:"
-    echo "  sudo apt install docker-compose"
+# Check if docker compose is available (new) or docker-compose (old)
+if docker compose version &> /dev/null; then
+    COMPOSE_CMD="docker compose"
+elif command -v docker-compose &> /dev/null; then
+    COMPOSE_CMD="docker-compose"
+else
+    echo "Docker Compose is not available."
+    echo "It should have been installed with Docker."
+    echo "Try: docker compose version"
     exit 1
 fi
 
 echo "Starting ROS 2 Humble container..."
-docker-compose up -d
+$COMPOSE_CMD up -d
 
 echo ""
 echo "Container started. To enter the container:"
