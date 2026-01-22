@@ -1,6 +1,6 @@
 services:
   ros2:
-    image: ros:humble-desktop
+    image: ros:humble-ros-base
     container_name: tinymovr_ros2
     privileged: true
     network_mode: host
