@@ -126,14 +126,13 @@ apt update && apt install -y \
   python3-pip \
   python3-colcon-common-extensions \
   iproute2 \
+  ros-humble-ament-package \
   ros-humble-rosidl-typesupport-c \
   ros-humble-rosidl-typesupport-cpp \
   ros-humble-rosidl-default-generators \
   ros-humble-ros2-control \
   ros-humble-ros2-controllers \
   ros-humble-teleop-twist-keyboard
-
-pip3 install ament_package
 
 # Build your robot package
 cd /workspace
