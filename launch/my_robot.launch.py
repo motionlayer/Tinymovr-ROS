@@ -23,7 +23,7 @@ def generate_launch_description():
     # Get URDF via xacro - using MY_ROBOT configuration
     robot_description_content = Command(
         [
-            PathJoinSubstitution([FindExecutable(name="xacro")]),
+            FindExecutable(name="xacro"),
             " ",
             PathJoinSubstitution(
                 [FindPackageShare("tinymovr_ros"), "urdf", "my_robot.urdf.xacro"]
