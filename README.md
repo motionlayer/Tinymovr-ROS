@@ -125,6 +125,7 @@ docker exec -it tinymovr_ros2 bash
 apt update && apt install -y \
   python3-pip \
   python3-colcon-common-extensions \
+  python3-ament-package \
   iproute2 \
   ros-humble-ros2-control \
   ros-humble-ros2-controllers \
