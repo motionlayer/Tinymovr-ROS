@@ -123,6 +123,9 @@ docker exec -it tinymovr_ros2 bash
 
 # Inside container: Install dependencies
 apt update && apt install -y \
+  python3-pip \
+  python3-colcon-common-extensions \
+  iproute2 \
   ros-humble-ros2-control \
   ros-humble-ros2-controllers \
   ros-humble-xacro \
