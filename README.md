@@ -132,6 +132,8 @@ apt update && apt install -y \
   ros-humble-rosidl-default-generators \
   ros-humble-ros2-control \
   ros-humble-ros2-controllers \
+  ros-humble-xacro \
+  ros-humble-robot-state-publisher \
   ros-humble-teleop-twist-keyboard
 
 # Build your robot package
