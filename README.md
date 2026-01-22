@@ -113,7 +113,7 @@ cd ~/Tinymovr-ROS  # Or wherever you cloned the repo
 ./docker_run.sh
 ```
 
-This starts a persistent container named `tinymovr_ros2` with Ubuntu + ROS 2 Humble.
+This starts a persistent container named `tinymovr_ros2` with Ubuntu + ROS 2 Humble Desktop (includes all build tools).
 
 #### 3. Enter Container and Build
 
@@ -123,14 +123,9 @@ docker exec -it tinymovr_ros2 bash
 
 # Inside container: Install dependencies
 apt update && apt install -y \
-  python3-pip \
-  python3-colcon-common-extensions \
-  python3-ament-package \
   iproute2 \
   ros-humble-ros2-control \
   ros-humble-ros2-controllers \
-  ros-humble-xacro \
-  ros-humble-robot-state-publisher \
   ros-humble-teleop-twist-keyboard
 
 # Build your robot package
