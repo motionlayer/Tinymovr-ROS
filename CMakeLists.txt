@@ -27,23 +27,16 @@ find_package(tf2_ros REQUIRED)
 set(TINYMOVR_SOURCES
   src/tinymovr/can.cpp
   src/tinymovr/comms.cpp
-  src/tinymovr/commutation_sensor.cpp
   src/tinymovr/controller.cpp
   src/tinymovr/current.cpp
-  src/tinymovr/external_spi.cpp
-  src/tinymovr/hall.cpp
+  src/tinymovr/encoder.cpp
   src/tinymovr/homing.cpp
   src/tinymovr/motor.cpp
-  src/tinymovr/onboard.cpp
-  src/tinymovr/position_sensor.cpp
   src/tinymovr/position.cpp
   src/tinymovr/scheduler.cpp
-  src/tinymovr/select.cpp
-  src/tinymovr/setup.cpp
   src/tinymovr/stall_detect.cpp
   src/tinymovr/tinymovr.cpp
   src/tinymovr/traj_planner.cpp
-  src/tinymovr/user_frame.cpp
   src/tinymovr/velocity.cpp
   src/tinymovr/voltage.cpp
   src/tinymovr/watchdog.cpp
@@ -59,6 +52,7 @@ add_library(${PROJECT_NAME}_joint_iface SHARED
 target_include_directories(${PROJECT_NAME}_joint_iface PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/tinymovr>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src/tinymovr>
   $<INSTALL_INTERFACE:include>
 )
 
