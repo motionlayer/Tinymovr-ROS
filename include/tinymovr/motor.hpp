@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <helpers.hpp>
+#include <tm_helpers.hpp>
 
 class Motor_ : Node
 {
@@ -24,6 +24,10 @@ class Motor_ : Node
         void set_pole_pairs(uint8_t value);
         uint8_t get_type(void);
         void set_type(uint8_t value);
+        float get_offset(void);
+        void set_offset(float value);
+        int8_t get_direction(void);
+        void set_direction(int8_t value);
         bool get_calibrated(void);
         float get_I_cal(void);
         void set_I_cal(float value);

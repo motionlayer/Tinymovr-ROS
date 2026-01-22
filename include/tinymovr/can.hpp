@@ -8,7 +8,7 @@
 
 #pragma once
 
-#include <helpers.hpp>
+#include <tm_helpers.hpp>
 
 class Can_ : Node
 {
@@ -20,7 +20,5 @@ class Can_ : Node
         void set_rate(uint32_t value);
         uint32_t get_id(void);
         void set_id(uint32_t value);
-        bool get_heartbeat(void);
-        void set_heartbeat(bool value);
 
 };

@@ -374,9 +374,9 @@ hardware_interface::return_type TinymovrSystem::read(
     {
       const double ticks_to_rads = 1.0 / rads_to_ticks_[i];
       hw_states_positions_[i] =
-        servos_[i].sensors.user_frame.get_position_estimate() * ticks_to_rads;
+        servos_[i].encoder.get_position_estimate() * ticks_to_rads;
       hw_states_velocities_[i] =
-        servos_[i].sensors.user_frame.get_velocity_estimate() * ticks_to_rads;
+        servos_[i].encoder.get_velocity_estimate() * ticks_to_rads;
       hw_states_efforts_[i] = servos_[i].controller.current.get_Iq_estimate();
     }
     return hardware_interface::return_type::OK;
