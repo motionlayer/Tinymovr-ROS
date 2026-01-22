@@ -42,3 +42,19 @@ diff_drive_controller:
     use_stamped_vel: false
     velocity_rolling_window_size: 10
     position_feedback: false
+
+    # Velocity limits (SAFETY)
+    linear:
+      x:
+        has_velocity_limits: true
+        max_velocity: 0.5  # m/s - adjust based on your robot
+        min_velocity: -0.5
+        has_acceleration_limits: true
+        max_acceleration: 1.0  # m/s^2
+        min_acceleration: -1.0
+    angular:
+      z:
+        has_velocity_limits: true
+        max_velocity: 1.0  # rad/s - adjust based on your robot
+        has_acceleration_limits: true
+        max_acceleration: 2.0  # rad/s^2
