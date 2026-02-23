@@ -11,8 +11,8 @@
 bool Hall_::get_calibrated(void)
 {
     bool value = 0;
-    this->send(65, this->_data, 0, true);
-    if (this->recv(65, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(68, this->_data, 0, true);
+    if (this->recv(68, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
@@ -22,13 +22,11 @@ bool Hall_::get_calibrated(void)
 uint8_t Hall_::get_errors(void)
 {
     uint8_t value = 0;
-    this->send(66, this->_data, 0, true);
-    if (this->recv(66, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(69, this->_data, 0, true);
+    if (this->recv(69, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
     return value;
 }
-
-
 

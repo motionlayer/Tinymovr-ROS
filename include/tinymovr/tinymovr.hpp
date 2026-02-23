@@ -9,6 +9,7 @@
 #pragma once
 
 #include <helpers.hpp>
+#include <nvm.hpp>
 #include <scheduler.hpp>
 #include <controller.hpp>
 #include <comms.hpp>
@@ -18,7 +19,7 @@
 #include <homing.hpp>
 #include <watchdog.hpp>
 
-static uint32_t avlos_proto_hash = 641680925;
+static uint32_t avlos_proto_hash = 3999954334;
 
 enum errors_flags
 {
@@ -160,6 +161,7 @@ class Tinymovr : Node
 
         Tinymovr(uint8_t _can_node_id, send_callback _send_cb, recv_callback _recv_cb, delay_us_callback _delay_us_cb, uint32_t _delay_us_value):
             Node(_can_node_id, _send_cb, _recv_cb, _delay_us_cb, _delay_us_value)
+            , nvm(_can_node_id, _send_cb, _recv_cb, _delay_us_cb, _delay_us_value)
             , scheduler(_can_node_id, _send_cb, _recv_cb, _delay_us_cb, _delay_us_value)
             , controller(_can_node_id, _send_cb, _recv_cb, _delay_us_cb, _delay_us_value)
             , comms(_can_node_id, _send_cb, _recv_cb, _delay_us_cb, _delay_us_value)
@@ -181,6 +183,7 @@ class Tinymovr : Node
         uint8_t get_warnings(void);
         void save_config();
         void erase_config();
+        Nvm_ nvm;
         void reset();
         void enter_dfu();
         uint32_t get_config_size(void);
