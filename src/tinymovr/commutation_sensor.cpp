@@ -11,8 +11,8 @@
 uint8_t Commutation_sensor_::get_connection(void)
 {
     uint8_t value = 0;
-    this->send(72, this->_data, 0, true);
-    if (this->recv(72, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(75, this->_data, 0, true);
+    if (this->recv(75, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
@@ -22,14 +22,14 @@ uint8_t Commutation_sensor_::get_connection(void)
 void Commutation_sensor_::set_connection(uint8_t value)
 {
     write_le(value, this->_data);
-    this->send(72, this->_data, sizeof(uint8_t), false);
+    this->send(75, this->_data, sizeof(uint8_t), false);
 }
 
 float Commutation_sensor_::get_bandwidth(void)
 {
     float value = 0;
-    this->send(73, this->_data, 0, true);
-    if (this->recv(73, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(76, this->_data, 0, true);
+    if (this->recv(76, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
@@ -39,14 +39,14 @@ float Commutation_sensor_::get_bandwidth(void)
 void Commutation_sensor_::set_bandwidth(float value)
 {
     write_le(value, this->_data);
-    this->send(73, this->_data, sizeof(float), false);
+    this->send(76, this->_data, sizeof(float), false);
 }
 
 int32_t Commutation_sensor_::get_raw_angle(void)
 {
     int32_t value = 0;
-    this->send(74, this->_data, 0, true);
-    if (this->recv(74, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(77, this->_data, 0, true);
+    if (this->recv(77, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
@@ -56,8 +56,8 @@ int32_t Commutation_sensor_::get_raw_angle(void)
 float Commutation_sensor_::get_position_estimate(void)
 {
     float value = 0;
-    this->send(75, this->_data, 0, true);
-    if (this->recv(75, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(78, this->_data, 0, true);
+    if (this->recv(78, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
@@ -67,13 +67,11 @@ float Commutation_sensor_::get_position_estimate(void)
 float Commutation_sensor_::get_velocity_estimate(void)
 {
     float value = 0;
-    this->send(76, this->_data, 0, true);
-    if (this->recv(76, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(79, this->_data, 0, true);
+    if (this->recv(79, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
     return value;
 }
-
-
 

@@ -11,13 +11,11 @@
 float Voltage_::get_Vq_setpoint(void)
 {
     float value = 0;
-    this->send(38, this->_data, 0, true);
-    if (this->recv(38, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(41, this->_data, 0, true);
+    if (this->recv(41, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
     return value;
 }
-
-
 

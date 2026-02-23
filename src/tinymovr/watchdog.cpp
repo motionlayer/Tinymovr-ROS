@@ -11,8 +11,8 @@
 bool Watchdog_::get_enabled(void)
 {
     bool value = 0;
-    this->send(94, this->_data, 0, true);
-    if (this->recv(94, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(97, this->_data, 0, true);
+    if (this->recv(97, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
@@ -22,14 +22,14 @@ bool Watchdog_::get_enabled(void)
 void Watchdog_::set_enabled(bool value)
 {
     write_le(value, this->_data);
-    this->send(94, this->_data, sizeof(bool), false);
+    this->send(97, this->_data, sizeof(bool), false);
 }
 
 bool Watchdog_::get_triggered(void)
 {
     bool value = 0;
-    this->send(95, this->_data, 0, true);
-    if (this->recv(95, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(98, this->_data, 0, true);
+    if (this->recv(98, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
@@ -39,8 +39,8 @@ bool Watchdog_::get_triggered(void)
 float Watchdog_::get_timeout(void)
 {
     float value = 0;
-    this->send(96, this->_data, 0, true);
-    if (this->recv(96, this->_data, &(this->_dlc), this->delay_us_value)) 
+    this->send(99, this->_data, 0, true);
+    if (this->recv(99, this->_data, &(this->_dlc), this->delay_us_value))
     {
         read_le(&value, this->_data);
     }
@@ -50,8 +50,6 @@ float Watchdog_::get_timeout(void)
 void Watchdog_::set_timeout(float value)
 {
     write_le(value, this->_data);
-    this->send(96, this->_data, sizeof(float), false);
+    this->send(99, this->_data, sizeof(float), false);
 }
-
-
 
